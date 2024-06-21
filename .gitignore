@@ -1,0 +1,17 @@
+# frontend
+frontend/node_modules
+frontend/.next
+frontend/.env.local
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
+
+# backend
+backend/venv
+backend/__pycache__
+backend/.env
+
+# General
+/idea
+.DS_Store
+Thumbs.db
+*.log
