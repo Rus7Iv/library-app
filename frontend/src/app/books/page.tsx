@@ -5,15 +5,21 @@ import axios from 'axios';
 import Image from 'next/image';
 
 interface Book {
-  id: number;
+  id: string;
   cover: string;
   title: string;
   description: string;
 }
 
+interface BooksResponse {
+  total_pages: number;
+  books: Book[];
+}
+
 const Books = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,8 +28,9 @@ const Books = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get(`/api/books?page=${page}`);
-      setBooks(response.data);
+      const response = await axios.get<BooksResponse>(`/api/books?page=${page}`);
+      setBooks(response.data.books);
+      setTotalPages(response.data.total_pages);
     } catch (error) {
       console.error('Error fetching books:', error);
     }
@@ -49,7 +56,7 @@ const Books = () => {
           </div>
           <div className="mt-6">
             <button onClick={() => setPage(page - 1)} disabled={page === 1} className="mr-2">Previous</button>
-            <button onClick={() => setPage(page + 1)}>Next</button>
+            <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</button>
           </div>
         </>
       )}
