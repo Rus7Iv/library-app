@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Response
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorGridFSBucket
 from pydantic import BaseModel, Field
 from typing import List
 from bson import ObjectId
-from pydantic import BaseModel, Field
+import json
 
 app = FastAPI(root_path="/api") 
 
@@ -15,10 +15,8 @@ async def close_mongo_connection(client):
     client.close()
 
 class BookDB(BaseModel):
-    id: str = Field(default_factory=lambda: str(ObjectId()), alias='_id')
     title: str
     description: str
-    cover: str
 
 class BookResponse(BaseModel):
     id: str
@@ -27,14 +25,29 @@ class BookResponse(BaseModel):
     cover: str
 
 @app.post("/books", response_model=BookResponse, status_code=201)
-async def create_book(book: BookDB):
+async def create_book(book: str = Form(...), cover: UploadFile = File(...)):
     client = await connect_to_mongo()
     try:
         db = client.bookstore
+        fs = AsyncIOMotorGridFSBucket(db)
+        cover_id = await fs.upload_from_stream(cover.filename, cover.file.read())
+        book_dict = json.loads(book)
+        book_dict["cover"] = str(cover_id)
         books_collection = db.books
-        book_dict = book.dict(by_alias=True)
         result = await books_collection.insert_one(book_dict)
-        return {"id": str(result.inserted_id), **book.dict(by_alias=True)}
+        return {"id": str(result.inserted_id), **book_dict, "cover": str(cover_id)}
+    finally:
+        await close_mongo_connection(client)
+
+@app.get("/covers/{cover_id}", response_class=Response, responses={200: {"content": {"image/*": {}}}})
+async def get_cover(cover_id: str):
+    client = await connect_to_mongo()
+    try:
+        db = client.bookstore
+        fs = AsyncIOMotorGridFSBucket(db)
+        cover = await fs.open_download_stream(ObjectId(cover_id))
+        data = await cover.read()
+        return Response(content=data, media_type="image/jpeg")
     finally:
         await close_mongo_connection(client)
 
