@@ -1,21 +1,39 @@
-import { useState } from 'react';
+"use client";
+
+import { useState, useRef } from 'react';
 import axios from 'axios';
 
 const CreateBook = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [cover, setCover] = useState('');
+  const coverRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await axios.post('/api/books', { title, description, cover });
-    if (response.status === 201) {
-      alert('Book created successfully');
-      setTitle('');
-      setDescription('');
-      setCover('');
-    } else {
-      alert('Error creating book');
+    const formData = new FormData();
+    formData.append('book', JSON.stringify({ title, description }));
+    if (coverRef.current && coverRef.current.files && coverRef.current.files[0]) {
+      formData.append('cover', coverRef.current.files[0]);
+    }
+
+    try {
+      const response = await axios.post('/api/books', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response.status === 201) {
+        alert('Book created successfully');
+        setTitle('');
+        setDescription('');
+        if (coverRef.current) {
+          coverRef.current.value = '';
+        }
+      } else {
+        alert('Error creating book');
+      }
+    } catch (error) {
+      console.error('Error creating book:', error);
     }
   };
 
@@ -43,11 +61,10 @@ const CreateBook = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block mb-2">Cover URL</label>
+          <label className="block mb-2">Cover</label>
           <input 
-            type="text" 
-            value={cover} 
-            onChange={(e) => setCover(e.target.value)} 
+            type="file" 
+            ref={coverRef} 
             className="w-full p-2 border rounded"
             required
           />
