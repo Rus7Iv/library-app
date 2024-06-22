@@ -41,7 +41,7 @@ const Books = () => {
           <div className="grid grid-cols-3 gap-4">
             {books.map((book) => (
               <div key={book.id} className="p-4 border rounded shadow">
-                <Image src={`/api/covers/${book.cover}`} alt={book.title} width={500} height={300} className="mb-4"/>
+                <Image src={`/api/covers/${book.cover}`} alt={book.title} width={500} height={300} className="mb-4" priority/>
                 <h2 className="text-xl font-bold">{book.title}</h2>
                 <p>{book.description}</p>
               </div>
