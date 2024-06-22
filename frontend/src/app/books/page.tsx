@@ -37,6 +37,11 @@ const Books = () => {
     setLoading(false);
   };
 
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-20">
       {loading ? (
@@ -56,6 +61,15 @@ const Books = () => {
           </div>
           <div className="mt-6">
             <button onClick={() => setPage(page - 1)} disabled={page === 1} className="mr-2">Previous</button>
+            {pageNumbers.map(number => (
+              <button 
+                key={number} 
+                onClick={() => setPage(number)} 
+                className={`mr-2 ${page === number ? 'font-bold' : ''}`}
+              >
+                {number}
+              </button>
+            ))}
             <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</button>
           </div>
         </>
