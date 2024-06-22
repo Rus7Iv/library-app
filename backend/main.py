@@ -24,6 +24,10 @@ class BookResponse(BaseModel):
     description: str
     cover: str
 
+class BooksResponse(BaseModel):
+    total_pages: int
+    books: List[BookResponse]
+
 @app.post("/books", response_model=BookResponse, status_code=201)
 async def create_book(book: str = Form(...), cover: UploadFile = File(...)):
     client = await connect_to_mongo()
@@ -51,16 +55,18 @@ async def get_cover(cover_id: str):
     finally:
         await close_mongo_connection(client)
 
-@app.get("/books", response_model=List[BookResponse])
+@app.get("/books", response_model=BooksResponse)
 async def list_books(page: int = 1, limit: int = 10, sort: str = "title"):
     client = await connect_to_mongo()
     try:
         db = client.bookstore
         books_collection = db.books
+        total_books = await books_collection.count_documents({})
+        total_pages = -(-total_books // limit)
         sort_key = sort if sort in ["title", "description", "cover"] else "title"
         books_cursor = books_collection.find().sort(sort_key).skip((page - 1) * limit).limit(limit)
         books = await books_cursor.to_list(length=limit)
-        return [{"id": str(book["_id"]), "title": book["title"], "description": book["description"], "cover": book["cover"]} for book in books]
+        return {"total_pages": total_pages, "books": [{"id": str(book["_id"]), "title": book["title"], "description": book["description"], "cover": book["cover"]} for book in books]}
     finally:
         await close_mongo_connection(client)
 
