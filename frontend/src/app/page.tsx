@@ -16,10 +16,10 @@ export default function Home() {
                 <p>Добро пожаловать в наше приложение для книг!</p>
                 <p>Вы можете просмотреть список книг или добавить новую книгу.</p>
               </div>
-              <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">
+              <div className="pt-6 text-base leading-6 space-y-4 font-bold sm:text-lg sm:leading-7">
                 <p>Что вы хотите сделать?</p>
-                <div className="flex space-x-4">
-                  <Link href="/books" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                <div className="flex sm:flex-row flex-col justify-between">
+                  <Link href="/books" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 mb-4 sm:mb-0">
                       Просмотреть книги
                   </Link>
                   <Link href="/books/create" className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
