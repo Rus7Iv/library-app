@@ -23,19 +23,19 @@ const Books = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get<BooksResponse>(`/api/books?page=${page}`);
+        setBooks(response.data.books);
+        setTotalPages(response.data.total_pages);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+      setLoading(false);
+    };
+
     fetchBooks();
   }, [page]);
-
-  const fetchBooks = async () => {
-    try {
-      const response = await axios.get<BooksResponse>(`/api/books?page=${page}`);
-      setBooks(response.data.books);
-      setTotalPages(response.data.total_pages);
-    } catch (error) {
-      console.error('Error fetching books:', error);
-    }
-    setLoading(false);
-  };
 
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {
