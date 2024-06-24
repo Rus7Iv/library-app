@@ -65,7 +65,7 @@ const CreateBook = () => {
                     <textarea 
                       value={description} 
                       onChange={(e) => setDescription(e.target.value)} 
-                      className="w-full p-2 border rounded resize-none"
+                      className="w-full p-2 border rounded resize-none h-[100px]"
                       required
                     />
                   </div>
