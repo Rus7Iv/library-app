@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import axios from 'axios';
+import Image from 'next/image';
 
 const CreateBook = () => {
   const [title, setTitle] = useState('');
@@ -38,39 +39,52 @@ const CreateBook = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Create Book</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block mb-2">Title</label>
-          <input 
-            type="text" 
-            value={title} 
-            onChange={(e) => setTitle(e.target.value)} 
-            className="w-full p-2 border rounded"
-            required
-          />
+    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+      <div className="relative py-3 sm:max-w-3xl sm:mx-auto">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+          <div className="max-w-md mx-auto">
+            <div>
+              <Image src='/logo.svg' alt='logo' width={100} height={100} priority/>
+            </div>
+            <div className="divide-y divide-gray-200">
+              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4">
+                    <label className="block mb-2">Заголовок</label>
+                    <input 
+                      type="text" 
+                      value={title} 
+                      onChange={(e) => setTitle(e.target.value)} 
+                      className="w-full p-2 border rounded"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block mb-2">Описание</label>
+                    <textarea 
+                      value={description} 
+                      onChange={(e) => setDescription(e.target.value)} 
+                      className="w-full p-2 border rounded resize-none"
+                      required
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block mb-2">Обложка книги</label>
+                    <input 
+                      type="file" 
+                      ref={coverRef} 
+                      className="w-full p-2 border rounded"
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="inline-flex w-full items-center px-4 py-2 border border-transparent text-base font-medium hadow-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-md">Добавить книгу</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="mb-4">
-          <label className="block mb-2">Description</label>
-          <textarea 
-            value={description} 
-            onChange={(e) => setDescription(e.target.value)} 
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block mb-2">Cover</label>
-          <input 
-            type="file" 
-            ref={coverRef} 
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <button type="submit" className="p-2 bg-blue-500 text-white rounded">Create</button>
-      </form>
+      </div>
     </div>
   );
 };
