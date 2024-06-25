@@ -28,6 +28,7 @@ body {
 
 body::-webkit-scrollbar {
   width: 12px;
+  height: 12px;
 }
 
 body::-webkit-scrollbar-track {
