@@ -2,14 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import Image from 'next/image';
-
-interface Book {
-  id: string;
-  cover: string;
-  title: string;
-  description: string;
-}
+import { Book } from '@/utils/types';
+import { BookCard } from '@/components/BookCard';
+import { Pagination } from '@/components/Pagination';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 interface BooksResponse {
   total_pages: number;
@@ -23,44 +19,42 @@ const Books = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const response = await axios.get<BooksResponse>(`/api/books?page=${page}`);
+        setBooks(response.data.books);
+        setTotalPages(response.data.total_pages);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
+      setLoading(false);
+    };
+
     fetchBooks();
   }, [page]);
 
-  const fetchBooks = async () => {
-    try {
-      const response = await axios.get<BooksResponse>(`/api/books?page=${page}`);
-      setBooks(response.data.books);
-      setTotalPages(response.data.total_pages);
-    } catch (error) {
-      console.error('Error fetching books:', error);
-    }
-    setLoading(false);
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-20">
+    <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
       {loading ? (
-        <div className="spinner">Loading...</div>
+        <LoadingSpinner />
       ) : books.length === 0 ? (
-        <div className="message">No books found</div>
+        <h2 className="text-xl font-bold mb-4 text-center">Книги не найдены</h2>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {books.map((book) => (
-              <div key={book.id} className="p-4 border rounded shadow">
-                <Image src={`/api/covers/${book.cover}`} alt={book.title} width={500} height={300} className="mb-4" priority/>
-                <h2 className="text-xl font-bold">{book.title}</h2>
-                <p>{book.description}</p>
-              </div>
+              <BookCard book={book} key={book.id}/>
             ))}
           </div>
-          <div className="mt-6">
-            <button onClick={() => setPage(page - 1)} disabled={page === 1} className="mr-2">Previous</button>
-            <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>Next</button>
-          </div>
+          <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         </>
       )}
-    </main>
+    </div>
   );
 };
 
