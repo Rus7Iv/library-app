@@ -42,7 +42,7 @@ export const BookCard = ({ book }: BookCardProps) => {
         onClick={handleCardClick}
       >
         <div 
-          className={`absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:rounded-xl opacity-0 sm:group-hover:opacity-100 transition duration-500 ease-in-out ${hovered ? '-rotate-90 -translate-y-1/3 bg-cyan-400' : 'group-hover:-rotate-6'}`}
+          className={`absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:rounded-xl opacity-0 md:group-hover:opacity-100 transition duration-500 ease-in-out ${hovered ? '-rotate-90 -translate-y-1/3 bg-cyan-400' : 'group-hover:-rotate-6'}`}
           style={{ transformOrigin: 'bottom' }}
         >
           {hovered && (
