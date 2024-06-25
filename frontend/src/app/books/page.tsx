@@ -42,7 +42,7 @@ const Books = () => {
       {loading ? (
         <div>Loading...</div>
       ) : books.length === 0 ? (
-        <div>No books found</div>
+        <h2 className="text-xl font-bold mb-4 text-center">Книги не найдены</h2>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
