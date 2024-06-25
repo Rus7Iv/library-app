@@ -41,7 +41,7 @@ export const BookCard = ({ book }: BookCardProps) => {
       </div>
       <div className="relative p-4 border rounded-xl shadow bg-white h-[300px]">
         <Image src={`/api/covers/${book.cover}`} alt={book.title} className="mb-4 h-[150px] object-cover" width={500} height={200} priority />
-        <h2 className="text-xl font-bold w-full text-center">{book.title}</h2>
+        <h2 className="text-xl font-bold w-full text-center overflow-hidden text-ellipsis line-clamp-2 h-[60px]">{book.title}</h2>
       </div>
     </div>
   );
