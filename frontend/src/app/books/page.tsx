@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Book } from '@/utils/types';
 import { BookCard } from '@/components/BookCard';
 import { Pagination } from '@/components/Pagination';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 interface BooksResponse {
   total_pages: number;
@@ -40,7 +41,7 @@ const Books = () => {
   return (
     <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
       {loading ? (
-        <div>Loading...</div>
+        <LoadingSpinner />
       ) : books.length === 0 ? (
         <h2 className="text-xl font-bold mb-4 text-center">Книги не найдены</h2>
       ) : (
