@@ -64,7 +64,7 @@ const ForwardButton = ({ page, totalPages, setPage }: IPaginationProps) => (
 
 export const Pagination = ({ page, totalPages, setPage }: IPaginationProps) => (
   <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7 justify-center flex">
-    <div className="flex-row space-x-4 w-full hidden md:flex">
+    <div className="flex-row space-x-4 w-full hidden md:flex justify-center">
       <BackButton page={page} setPage={setPage} />
       <PageList page={page} totalPages={totalPages} setPage={setPage} />
       <ForwardButton page={page} totalPages={totalPages} setPage={setPage} />
