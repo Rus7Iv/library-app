@@ -34,7 +34,7 @@ export const BookCard = ({ book }: BookCardProps) => {
         style={{ transformOrigin: 'bottom' }}
       >
         {hovered && (
-            <div className="absolute flex inset-0 text-white p-4 w-[250px] h-[120px] overflow-y-auto" style={{ transform: 'translateY(45%) translateX(-20%) rotate(90deg)' }}>
+            <div className="absolute flex inset-0 text-white p-4 w-[220px] h-[120px] overflow-y-auto" style={{ transform: 'translateY(45%) translateX(-20%) rotate(90deg)' }}>
                 <p>{book.description}</p>
             </div>
         )}
