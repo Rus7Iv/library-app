@@ -3,14 +3,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
-import Link from 'next/link';
-
-interface Book {
-  id: string;
-  cover: string;
-  title: string;
-  description: string;
-}
+import { Book } from '@/utils/types';
+import { BookCard } from '@/components/BookCard';
 
 interface BooksResponse {
   total_pages: number;
@@ -62,14 +56,7 @@ const Books = () => {
                   <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
                       {books.map((book) => (
-                        <div key={book.id} className="relative group">
-                          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-light-blue-500 shadow-lg transform -skew-y-6 sm:skew-y-0 group-hover:-rotate-6 sm:rounded-xl opacity-0 group-hover:opacity-100 transition duration-500 ease-in-out"></div>
-                          <div className="relative z-10 p-4 border rounded-xl shadow bg-white">
-                            <Image src={`/api/covers/${book.cover}`} alt={book.title} width={500} height={100} className="mb-4" priority/>
-                            <h2 className="text-xl font-bold">{book.title}</h2>
-                            <p>{book.description}</p>
-                          </div>
-                        </div>
+                        <BookCard book={book} key={book.id}/>
                       ))}
                     </div>
                     <div className="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7 justify-center flex">
