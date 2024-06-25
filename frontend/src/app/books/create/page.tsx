@@ -30,6 +30,7 @@ const CreateBook = () => {
         alert('Book created successfully');
         setTitle('');
         setDescription('');
+        setImagePreview('');
         if (coverRef.current) {
           coverRef.current.value = '';
         }
