@@ -56,7 +56,7 @@ async def get_cover(cover_id: str):
         await close_mongo_connection(client)
 
 @app.get("/books", response_model=BooksResponse)
-async def list_books(page: int = 1, limit: int = 10, sort: str = "title"):
+async def list_books(page: int = 1, limit: int = 9, sort: str = "title"):
     client = await connect_to_mongo()
     try:
         db = client.bookstore
