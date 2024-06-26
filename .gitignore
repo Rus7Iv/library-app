@@ -7,7 +7,7 @@ frontend/next-env.d.ts
 
 # backend
 backend/venv
-backend/__pycache__
+**/__pycache__
 backend/.env
 
 # General
