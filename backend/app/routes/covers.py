@@ -1,19 +1,16 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Response
+from fastapi import APIRouter, HTTPException, UploadFile, File, Response, Depends
 import gridfs
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
 from bson import ObjectId
-from ..database import client
+from ..database import get_db_client
 
 router = APIRouter()
 
 @router.post("/covers",
              summary="Загрузить изображение на сервер",
              description="Загрузка изображения в базу данных")
-async def upload_cover(cover: UploadFile = File(...)):
-    if client is None:
-        raise HTTPException(status_code=500, detail="Database client is not initialized")
-
-    db = client.bookstore
+async def upload_cover(cover: UploadFile = File(...), db_client=Depends(get_db_client)):
+    db = db_client.bookstore
     fs = AsyncIOMotorGridFSBucket(db)
 
     try:
@@ -29,11 +26,8 @@ async def upload_cover(cover: UploadFile = File(...)):
            description="Получение изображения по id",
            response_class=Response,
            responses={200: {"content": {"image/*": {}}}})
-async def get_cover(cover_id: str, page: int = 1, limit: int = 10):
-    if client is None:
-        raise HTTPException(status_code=500, detail="Database client is not initialized")
-
-    db = client.bookstore
+async def get_cover(cover_id: str, db_client=Depends(get_db_client)):
+    db = db_client.bookstore
     fs = AsyncIOMotorGridFSBucket(db)
 
     try:

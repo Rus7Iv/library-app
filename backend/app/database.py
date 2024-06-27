@@ -1,9 +1,25 @@
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import Depends
 
-client = AsyncIOMotorClient("mongodb://localhost:27017")
+class DatabaseClient:
+    def __init__(self):
+        self.client = None
 
-async def startup_db_client():
-    pass
+    async def startup(self):
+        self.client = AsyncIOMotorClient("mongodb://localhost:27017")
 
-async def shutdown_db_client():
-    await client.close()
+    async def shutdown(self):
+        if self.client is not None:
+            try:
+                await self.client.close()
+            except Exception as e:
+                print(f"Error closing database connection: {e}")
+            finally:
+                self.client = None
+
+    async def __call__(self):
+        if self.client is None:
+            raise RuntimeError("Database client is not initialized")
+        return self.client
+
+get_db_client = DatabaseClient()

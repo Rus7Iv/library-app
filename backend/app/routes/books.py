@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Depends
 from bson import ObjectId
-from ..database import client
 from ..schemas import BookDB, BookResponse, BooksResponse
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
 import json
+from ..database import get_db_client
 
 router = APIRouter()
 
@@ -12,11 +12,8 @@ router = APIRouter()
              status_code=201,
              summary="Создание новой книги",
              description='Данные в поле book вглядят так: { "title": "TitleExample", "description": "DescritionExample" }')
-async def create_book(book: str = Form(...), cover: UploadFile = File(...)):
-    if client is None:
-        raise HTTPException(status_code=500, detail="Database client is not initialized")
-    
-    db = client.bookstore
+async def create_book(book: str = Form(...), cover: UploadFile = File(...), db_client=Depends(get_db_client)):
+    db = db_client.bookstore
     fs = AsyncIOMotorGridFSBucket(db)
     cover_id = await fs.upload_from_stream(cover.filename, cover.file.read())
     book_dict = json.loads(book)
@@ -29,11 +26,8 @@ async def create_book(book: str = Form(...), cover: UploadFile = File(...)):
            response_model=BooksResponse,
            summary="Получение списка книг",
            description="Учитывается пагинация, количество книг на одной странице и поиск по имени")
-async def list_books(page: int = 1, limit: int = 9, sort: str = "title"):
-    if client is None:
-        raise HTTPException(status_code=500, detail="Database client is not initialized")
-    
-    db = client.bookstore
+async def list_books(page: int = 1, limit: int = 9, sort: str = "title", db_client=Depends(get_db_client)):
+    db = db_client.bookstore
     books_collection = db.books
     total_books = await books_collection.count_documents({})
     total_pages = -(-total_books // limit)
@@ -46,11 +40,8 @@ async def list_books(page: int = 1, limit: int = 9, sort: str = "title"):
            response_model=BookResponse,
            summary="Получить книгу по id",
            description="Получение книги по её id")
-async def get_book(book_id: str):
-    if client is None:
-        raise HTTPException(status_code=500, detail="Database client is not initialized")
-    
-    db = client.bookstore
+async def get_book(book_id: str, db_client=Depends(get_db_client)):
+    db = db_client.bookstore
     books_collection = db.books
     book = await books_collection.find_one({"_id": ObjectId(book_id)})
     if book:
