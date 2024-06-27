@@ -16,6 +16,16 @@ export const Modal = ({ onClose, children }: ModalProps) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isVisible) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = "12px";
+    } else {
+      document.body.style.overflow = 'auto';
+      document.body.style.paddingRight = "0";
+    }
+  }, [isVisible]);
+
   const handleClose = () => {
     setIsVisible(false);
     setTimeout(onClose, 300);
@@ -33,7 +43,7 @@ export const Modal = ({ onClose, children }: ModalProps) => {
         }`}
       >
         <button
-          className="absolute top-2 right-2 text-2xl"
+          className="absolute top-1 right-1 text-2xl h-[32px] w-[32px]"
           onClick={handleClose}
         >
           &times;
