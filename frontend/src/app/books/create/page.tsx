@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef } from 'react';
-import axios from 'axios';
 import Image from 'next/image';
-import { PlusIcon } from '@/assets/PlusIcon'
+import { PlusIcon } from '@/assets/PlusIcon';
+import { createBook } from '@/api/api';
 
 const CreateBook = () => {
   const [title, setTitle] = useState('');
@@ -14,18 +14,10 @@ const CreateBook = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('book', JSON.stringify({ title, description }));
-    if (coverRef.current && coverRef.current.files && coverRef.current.files[0]) {
-      formData.append('cover', coverRef.current.files[0]);
-    }
+    const cover = coverRef.current?.files?.[0] || null;
 
     try {
-      const response = await axios.post('/api/books', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await createBook(title, description, cover);
       if (response.status === 201) {
         alert('Book created successfully');
         setTitle('');
@@ -44,17 +36,17 @@ const CreateBook = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0]
-      const reader = new FileReader()
+      const file = e.target.files[0];
+      const reader = new FileReader();
       reader.onload = loadEvent => {
         if (loadEvent.target) {
-          const base64Image = loadEvent.target.result as string
-          setImagePreview(base64Image)
+          const base64Image = loadEvent.target.result as string;
+          setImagePreview(base64Image);
         }
-      }
-      reader.readAsDataURL(file)
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -62,34 +54,34 @@ const CreateBook = () => {
     if (coverRef.current) {
       coverRef.current.value = '';
     }
-  }  
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setIsDragOver(true);
-  }
+  };
 
   const handleDragLeave = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setIsDragOver(false);
-  }
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     setIsDragOver(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0]
-      const reader = new FileReader()
+      const file = e.dataTransfer.files[0];
+      const reader = new FileReader();
       reader.onload = loadEvent => {
         if (loadEvent.target) {
-          const base64Image = loadEvent.target.result as string
-          setImagePreview(base64Image)
+          const base64Image = loadEvent.target.result as string;
+          setImagePreview(base64Image);
         }
-      }
-      reader.readAsDataURL(file)
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   return (
     <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
