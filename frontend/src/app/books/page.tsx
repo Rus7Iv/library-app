@@ -1,16 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Book } from '@/utils/types';
 import { BookCard } from '@/components/BookCard';
 import { Pagination } from '@/components/Pagination';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
-
-interface BooksResponse {
-  total_pages: number;
-  books: Book[];
-}
+import { fetchBooks } from '@/api/api';
 
 const Books = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -19,18 +14,19 @@ const Books = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBooks = async () => {
+    const loadBooks = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get<BooksResponse>(`/api/books?page=${page}`);
-        setBooks(response.data.books);
-        setTotalPages(response.data.total_pages);
+        const data = await fetchBooks(page);
+        setBooks(data.books);
+        setTotalPages(data.total_pages);
       } catch (error) {
         console.error('Error fetching books:', error);
       }
       setLoading(false);
     };
 
-    fetchBooks();
+    loadBooks();
   }, [page]);
 
   const pageNumbers = [];
