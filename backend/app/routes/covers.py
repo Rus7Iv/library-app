@@ -6,7 +6,9 @@ from ..database import client
 
 router = APIRouter()
 
-@router.post("/covers")
+@router.post("/covers",
+             summary="Загрузить изображение на сервер",
+             description="Загрузка изображения в базу данных")
 async def upload_cover(cover: UploadFile = File(...)):
     if client is None:
         raise HTTPException(status_code=500, detail="Database client is not initialized")
@@ -22,8 +24,12 @@ async def upload_cover(cover: UploadFile = File(...)):
 
     return {"cover_id": str(cover_id)}
 
-@router.get("/covers/{cover_id}", response_class=Response, responses={200: {"content": {"image/*": {}}}})
-async def get_cover(cover_id: str):
+@router.get("/covers/{cover_id}",
+           summary="Получить изображение",
+           description="Получение изображения по id",
+           response_class=Response,
+           responses={200: {"content": {"image/*": {}}}})
+async def get_cover(cover_id: str, page: int = 1, limit: int = 10):
     if client is None:
         raise HTTPException(status_code=500, detail="Database client is not initialized")
 

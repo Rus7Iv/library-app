@@ -7,7 +7,11 @@ import json
 
 router = APIRouter()
 
-@router.post("/books", response_model=BookResponse, status_code=201)
+@router.post("/books", 
+             response_model=BookResponse, 
+             status_code=201,
+             summary="Создание новой книги",
+             description='Данные в поле book вглядят так: { "title": "TitleExample", "description": "DescritionExample" }')
 async def create_book(book: str = Form(...), cover: UploadFile = File(...)):
     if client is None:
         raise HTTPException(status_code=500, detail="Database client is not initialized")
@@ -21,7 +25,10 @@ async def create_book(book: str = Form(...), cover: UploadFile = File(...)):
     result = await books_collection.insert_one(book_dict)
     return {"id": str(result.inserted_id), **book_dict, "cover": str(cover_id)}
 
-@router.get("/books", response_model=BooksResponse)
+@router.get("/books",
+           response_model=BooksResponse,
+           summary="Получение списка книг",
+           description="Учитывается пагинация, количество книг на одной странице и поиск по имени")
 async def list_books(page: int = 1, limit: int = 9, sort: str = "title"):
     if client is None:
         raise HTTPException(status_code=500, detail="Database client is not initialized")
@@ -35,7 +42,10 @@ async def list_books(page: int = 1, limit: int = 9, sort: str = "title"):
     books = await books_cursor.to_list(length=limit)
     return {"total_pages": total_pages, "books": [{"id": str(book["_id"]), "title": book["title"], "description": book["description"], "cover": book["cover"]} for book in books]}
 
-@router.get("/books/{book_id}", response_model=BookResponse)
+@router.get("/books/{book_id}",
+           response_model=BookResponse,
+           summary="Получить книгу по id",
+           description="Получение книги по её id")
 async def get_book(book_id: str):
     if client is None:
         raise HTTPException(status_code=500, detail="Database client is not initialized")
